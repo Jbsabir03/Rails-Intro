@@ -1,4 +1,5 @@
 class MoviesController < ApplicationController
+  before_action :force_index_redirect, only: [:index]
 
   def show
     id = params[:id] # retrieve movie ID from URI route
@@ -41,6 +42,14 @@ class MoviesController < ApplicationController
     @movie.destroy
     flash[:notice] = "Movie '#{@movie.title}' deleted."
     redirect_to movies_path
+  end
+  
+    def force_index_redirect
+    if !params.key?(:ratings) || !params.key?(:sort_by)
+      flash.keep
+      url = movies_path(sort_by: sort_by, ratings: ratings_hash)
+      redirect_to url
+    end
   end
   
   private
